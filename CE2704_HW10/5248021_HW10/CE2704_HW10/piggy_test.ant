@@ -1,0 +1,154 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 1995-2003 Xilinx, Inc.
+// All Right Reserved.
+////////////////////////////////////////////////////////////////////////////////
+//   ____  ____ 
+//  /   /\/   / 
+// /___/  \  /    Vendor: Xilinx 
+// \   \   \/     Version : 7.1.04i
+//  \   \         Application : ISE WebPACK
+//  /   /         Filename : piggy_test.ant
+// /___/   /\     Timestamp : Fri Feb 24 17:59:04 2012
+// \   \  /  \ 
+//  \___\/\___\ 
+//
+//Command: 
+//Design Name: piggy_test
+//Device: Xilinx
+//
+`timescale 1ns/1ps
+
+module piggy_test;
+    reg clk = 1'b0;
+    reg reset = 1'b1;
+    reg b1_in = 1'b0;
+    reg b5_in = 1'b0;
+    reg b10_in = 1'b0;
+    wire [6:0] segment1;
+    wire [6:0] segment0;
+    wire full_led;
+
+    parameter PERIOD = 100;
+    parameter real DUTY_CYCLE = 0.5;
+    parameter OFFSET = 0;
+
+    initial    // Clock process for clk
+    begin
+        #OFFSET;
+        forever
+        begin
+            clk = 1'b0;
+            #(PERIOD-(PERIOD*DUTY_CYCLE)) clk = 1'b1;
+            #(PERIOD*DUTY_CYCLE);
+        end
+    end
+
+    piggy UUT (
+        .clk(clk),
+        .reset(reset),
+        .b1_in(b1_in),
+        .b5_in(b5_in),
+        .b10_in(b10_in),
+        .segment1(segment1),
+        .segment0(segment0),
+        .full_led(full_led));
+
+    integer TX_FILE = 0;
+    integer TX_ERROR = 0;
+    
+    initial begin    // Annotation process for clock clk
+        #0;
+        ANNOTATE_segment1;
+        ANNOTATE_segment0;
+        ANNOTATE_full_led;
+        #OFFSET;
+        forever begin
+            #65;
+            ANNOTATE_segment1;
+            ANNOTATE_segment0;
+            ANNOTATE_full_led;
+            #35;
+        end
+    end
+
+    initial begin  // Open the annotations file...
+        TX_FILE = $fopen("C:\\5248021\\CE2704_HW10\\piggy_test.ano");
+        #1700 // Final time:  1700 ns
+        $display("Success! Annotation Simulation Complete.");
+        $fdisplay(TX_FILE, "Total[%d]", TX_ERROR);
+        $fclose(TX_FILE);
+        $finish;
+    end
+
+    initial begin
+        // -------------  Current Time:  135ns
+        #135;
+        reset = 1'b0;
+        // -------------------------------------
+        // -------------  Current Time:  235ns
+        #100;
+        b5_in = 1'b1;
+        // -------------------------------------
+        // -------------  Current Time:  535ns
+        #300;
+        b1_in = 1'b1;
+        // -------------------------------------
+        // -------------  Current Time:  635ns
+        #100;
+        b1_in = 1'b0;
+        b5_in = 1'b0;
+        b10_in = 1'b1;
+        // -------------------------------------
+        // -------------  Current Time:  735ns
+        #100;
+        b1_in = 1'b1;
+        b10_in = 1'b0;
+        // -------------------------------------
+        // -------------  Current Time:  835ns
+        #100;
+        b1_in = 1'b0;
+        b10_in = 1'b1;
+        // -------------------------------------
+        // -------------  Current Time:  1035ns
+        #200;
+        b5_in = 1'b1;
+        b10_in = 1'b0;
+        // -------------------------------------
+        // -------------  Current Time:  1335ns
+        #300;
+        b1_in = 1'b1;
+        b5_in = 1'b0;
+        // -------------------------------------
+        // -------------  Current Time:  1435ns
+        #100;
+        b1_in = 1'b0;
+        b5_in = 1'b1;
+        // -------------------------------------
+    end
+
+    task ANNOTATE_segment1;
+        #0 begin
+            $fdisplay(TX_FILE, "Annotate[%d,segment1,%b]", $time, segment1);
+            $fflush(TX_FILE);
+            TX_ERROR = TX_ERROR + 1;
+        end
+    endtask
+
+    task ANNOTATE_segment0;
+        #0 begin
+            $fdisplay(TX_FILE, "Annotate[%d,segment0,%b]", $time, segment0);
+            $fflush(TX_FILE);
+            TX_ERROR = TX_ERROR + 1;
+        end
+    endtask
+
+    task ANNOTATE_full_led;
+        #0 begin
+            $fdisplay(TX_FILE, "Annotate[%d,full_led,%b]", $time, full_led);
+            $fflush(TX_FILE);
+            TX_ERROR = TX_ERROR + 1;
+        end
+    endtask
+
+endmodule
+

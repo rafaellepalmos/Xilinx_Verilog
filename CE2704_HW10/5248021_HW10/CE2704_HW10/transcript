@@ -1,0 +1,13 @@
+# Reading C:/Modeltech_xe_starter/tcl/vsim/pref.tcl 
+# do piggy_test.fdo 
+# ** Warning: (vlib-34) Library already exists at "work".
+# Model Technology ModelSim XE III vlog 6.0d Compiler 2005.04 Apr 26 2005
+# -- Compiling module piggy
+# ** Error: piggy.v(198): near "=":  expecting: '#' '(' IDENT
+# ** Error: piggy.v(205): near "[":  expecting: '#' '(' IDENT
+# ** Error: piggy.v(299): near "[":  expecting: '#' '(' IDENT
+# ** Error: C:/Modeltech_xe_starter/win32xoem/vlog failed.
+# Error in macro ./piggy_test.fdo line 5
+# C:/Modeltech_xe_starter/win32xoem/vlog failed.
+#     while executing
+# "vlog  piggy.v"
